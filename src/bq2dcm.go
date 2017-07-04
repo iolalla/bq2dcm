@@ -13,7 +13,7 @@ import (
     "cloud.google.com/go/storage"
     "golang.org/x/net/context"
     "google.golang.org/api/iterator"
-    /**"google.golang.org/appengine"*/
+    "google.golang.org/appengine"
 )
 
 type Cookie struct {
@@ -29,7 +29,6 @@ func (x *Cookie) CSV() string {
     return value
 }
 
-var client *bigquery.Client
 var BUCKETNAME = "dcmtest"
 var QUERY = "SELECT 'List_ID' as ListID, User_ID as uid, NOW() as timestamp FROM (SELECT *,User_ID AS index, ROW_NUMBER() OVER (PARTITION BY index) AS pos, FROM [cloud-se-es:dcm.p_activity_411205] where User_ID != '0' ) WHERE pos = 1"
 
@@ -39,10 +38,17 @@ func main() {
 	http.HandleFunc("/_ah/health" , healthCheck)
 	log.Print("Listening on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
+	appengine.Main()
 }
 
 func cron(w http.ResponseWriter, r *http.Request) {
-    ctx := context.Background()
+   ctx := context.Background()
+   proj := "cloud-se-es"
+
+   client, err := bigquery.NewClient(ctx, proj)
+   if err != nil {
+           log.Fatal(err)
+   }
 
     q := client.Query(QUERY)
     it, err := q.Read(ctx)
