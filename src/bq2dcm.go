@@ -4,16 +4,11 @@ import (
 	"fmt"
 	"log"
     "time"
-    /**"io"*/
-    /**"os"*/
 	"net/http"
-    /**"net/url"*/
-    /**"strings"*/
     "cloud.google.com/go/bigquery"
     "cloud.google.com/go/storage"
     "golang.org/x/net/context"
     "google.golang.org/api/iterator"
-    /**"google.golang.org/appengine"*/
 )
 
 type Cookie struct {
@@ -29,9 +24,10 @@ func (x *Cookie) CSV() string {
     return value
 }
 
-var client *bigquery.Client
-var BUCKETNAME = "dcmtest"
-var QUERY = "SELECT 'List_ID' as ListID, User_ID as uid, NOW() as timestamp FROM (SELECT *,User_ID AS index, ROW_NUMBER() OVER (PARTITION BY index) AS pos, FROM [cloud-se-es:dcm.p_activity_411205] where User_ID != '0' ) WHERE pos = 1"
+var BUCKETNAME = "nbolsadcmtest"
+//var QUERY = "SELECT 'List_ID' as ListID, User_ID as uid, NOW() as timestamp FROM (SELECT *,User_ID AS index, ROW_NUMBER() OVER (PARTITION BY index) AS pos, FROM [cloud-se-es:dcm.p_activity_411205] where User_ID != '0' ) WHERE pos = 1"
+var QUERY = "Select Ticker as ListID, Volumen as uid, NOW() as timestamp FROM [nbolsa-calculus:ibex35.megabolsa] LIMIT 10"
+
 
 func main() {
 	http.HandleFunc("/", handle)
@@ -42,11 +38,19 @@ func main() {
 }
 
 func cron(w http.ResponseWriter, r *http.Request) {
-    ctx := context.Background()
+    ctx := r.Context()
+    //projectID := "YOUR_PROJECT_ID"
+    //projectID := "cloud-se-es"
+    projectID := "nbolsa-calculus"
+
+    client, err := bigquery.NewClient(ctx, projectID)
+    if err != nil {
+        log.Fatal(err)
+    }
 
     q := client.Query(QUERY)
     it, err := q.Read(ctx)
-        if err != nil {
+    if err != nil {
         log.Fatal(err)
     }
 
@@ -61,7 +65,7 @@ func cron(w http.ResponseWriter, r *http.Request) {
         }
         fmt.Println(row)
     }
-
+    //saveToFile(ctx, cookies)
     w.Header().Set("Content-Type","application/json; charset=UTF-8")
     w.WriteHeader(http.StatusOK)
 }
