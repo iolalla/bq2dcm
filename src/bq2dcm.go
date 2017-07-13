@@ -50,7 +50,7 @@ func cron(w http.ResponseWriter, r *http.Request) {
 	//Todo: Replace with your Project ID
 	projectID := "YOUR_PROJECT_ID"
 	projectid := r.URL.Query().Get("projectid")
-	if query != "" {
+	if projectid != "" {
 		projectID = projectid
 	}
 
