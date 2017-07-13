@@ -42,10 +42,8 @@ func main() {
 
 func cron(w http.ResponseWriter, r *http.Request) {
     ctx := r.Context()
-    //projectID := "YOUR_PROJECT_ID"
-    //projectID := "cloud-se-es"
-    projectID := "nbolsa-calculus"
-
+    projectID := "YOUR_PROJECT_ID"
+    
     client, err := bigquery.NewClient(ctx, projectID)
     if err != nil {
         log.Fatal(err)
