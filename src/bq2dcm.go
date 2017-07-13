@@ -27,9 +27,12 @@ func (x *Cookie) CSV() string {
     return value
 }
 
-var BUCKETNAME = "nbolsadcmtest"
-//var QUERY = "SELECT 'List_ID' as ListID, User_ID as uid, NOW() as timestamp FROM (SELECT *,User_ID AS index, ROW_NUMBER() OVER (PARTITION BY index) AS pos, FROM [cloud-se-es:dcm.p_activity_411205] where User_ID != '0' ) WHERE pos = 1"
-var QUERY = "Select Ticker as ListID, Volumen as uid, NOW() as timestamp FROM [nbolsa-calculus:ibex35.megabolsa] LIMIT 10"
+//Todo: Replace with your Bucket Name
+var BUCKETNAME = "YOUR_BUCKET_NAME"
+//Todo: Replace with the query that best fits your needs
+var QUERY = "SELECT 'List_ID' as ListID, User_ID as uid, NOW() as timestamp FROM (SELECT *," +
+	"User_ID AS index, ROW_NUMBER() OVER (PARTITION BY index) AS pos, FROM [YOUR_PROJECT_ID:YOUR_DATASET.YOUR_ACTIVITY_TABLE] " +
+	"where User_ID != '0' ) WHERE pos = 1"
 
 func main() {
 	http.HandleFunc("/", handle)
@@ -42,8 +45,20 @@ func main() {
 
 func cron(w http.ResponseWriter, r *http.Request) {
     ctx := r.Context()
-    projectID := "YOUR_PROJECT_ID"
-    
+
+
+	//Todo: Replace with your Project ID
+	projectID := "YOUR_PROJECT_ID"
+	projectid := r.URL.Query().Get("projectid")
+	if query != "" {
+		projectID = projectid
+	}
+
+	query := r.URL.Query().Get("query")
+	if query != "" {
+		QUERY = query
+	}
+
     client, err := bigquery.NewClient(ctx, projectID)
     if err != nil {
         log.Fatal(err)
@@ -107,6 +122,7 @@ func saveToFile(ctx context.Context, Cookies []Cookie) {
     bucketName := BUCKETNAME
     bucket := client.Bucket(bucketName)
     t := time.Now()
+	//Todo: Review the date format and adapt it to your needs if required
     name := "File-"+ t.Format("20060102_150405")+ ".csv"
 
     obj := bucket.Object(name)
