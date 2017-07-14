@@ -27,6 +27,8 @@ func (x *Cookie) CSV() string {
     return value
 }
 
+//Todo: Replace with your Project ID
+var PROJECTID = "YOUR_PROJECT_ID"
 //Todo: Replace with your Bucket Name
 var BUCKETNAME = "YOUR_BUCKET_NAME"
 //Todo: Replace with the query that best fits your needs
@@ -46,12 +48,9 @@ func main() {
 func cron(w http.ResponseWriter, r *http.Request) {
     ctx := r.Context()
 
-
-	//Todo: Replace with your Project ID
-	projectID := "YOUR_PROJECT_ID"
 	projectid := r.URL.Query().Get("projectid")
 	if projectid != "" {
-		projectID = projectid
+		PROJECTID = projectid
 	}
 
 	query := r.URL.Query().Get("query")
@@ -59,7 +58,7 @@ func cron(w http.ResponseWriter, r *http.Request) {
 		QUERY = query
 	}
 
-    client, err := bigquery.NewClient(ctx, projectID)
+    client, err := bigquery.NewClient(ctx, PROJECTID)
     if err != nil {
         log.Fatal(err)
     }
@@ -106,10 +105,14 @@ func handle(w http.ResponseWriter, r *http.Request) {
                 http.NotFound(w, r)
                 return
         }
-        fmt.Fprint(w, "Methods are query and cron")
+        fmt.Fprint(w, "Method available is cron")
 }
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/_ah/health" {
+			http.NotFound(w, r)
+			return
+		}
         fmt.Fprint(w, "ok")
 }
 
