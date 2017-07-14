@@ -20,7 +20,7 @@ echo 'File to store the query results: ' $file
 # Every file header must include list_id and either cookie_encrypted or cookie_decimal. 
 # All other columns in the file are optional.
 # File Headers are case sensitive and should only be lower case to avoid errors.
-query="SELECT 'List_ID' as list_id, User_ID as cookie_encrypted, NOW() as timestamp , 'false' as delete\
+query="SELECT 'List_ID' as list_id, User_ID as cookie_encrypted, NOW() as timestamp , 'false' as [delete]\
 FROM ( \
   SELECT *,User_ID AS index, ROW_NUMBER() OVER (PARTITION BY index) AS pos, \
   FROM [YOUR_PROJECT:YOUR_DATASET.YOUR_TABLE] where User_ID != '0' \
