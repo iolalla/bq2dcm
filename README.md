@@ -1,5 +1,5 @@
 The objective of this project is to simplify the process to move data from 
-DobleClick DataTransfer (aka BQ) to Storage and to DC Manager.
+Data Transfer ( from Doubleclick DCM/DBM ) to BigQuery and then send data back ( audiences ) to Doubleclick DCM/DBM ( through PLUs )
 
 The project includes examples for a shell script and a go appengine app.
 
