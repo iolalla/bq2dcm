@@ -1,15 +1,17 @@
 #!/bin/sh
-# Modify this to include your DataStorage path pointing to a PLU BUCKET
+# TODO:Modify this to include your DataStorage path pointing to a PLU BUCKET
 # This will like something like this: dcm-plt-data-c18f5735ec6014300b17dcefd64bc4gc9c5ac7eb
 outpath="gs://YOUR_PATH_TO_PLU_BUCKET"
 # This is the date format to include in the file names.
 when=`date +%Y%m%d_%H%M%S`
+# TODO: update with you accountid and floodlightconfigurationid 
 # This is a .dat file, but the data included is a CSV format
 # accountid_floodlightConfigurationid_yyyymmdd_uploadnumber
 # accountid == DCM Network ID
 # floodlightConfigurationid == Look into the DCM console Advertiser ID that owns the audiences
 file='accountid_floodlightConfigurationid_'$when'.dat'
 echo 'File to store the query results: ' $file
+# TODO: Update the query to YOUR_PROJECT, YOUR_DATASET.YOUR_TABLE
 # This is the query to be used to gather the results from BQ, feel free to adapt
 # it to yout needs, the only trick this one does is to avoid duplicates in the 
 # UserID
@@ -37,3 +39,4 @@ then
     rm $file
     echo 'File '$file' removed.'
 fi
+# Once this is setup you can se a crontab
