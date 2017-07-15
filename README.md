@@ -12,4 +12,5 @@ edit the file and replace the variables in CAPITALS.
 In order to run the go appengine, you will need go 1.8 and appengine flex,
 to install dependencies please run, from the src dir:
 $ go get ./...
-
+And to deploy it you will need 
+$ gcloud app deploy src
